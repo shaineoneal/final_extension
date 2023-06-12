@@ -1,6 +1,6 @@
 import React, { useState, createContext } from "react";
 //import { getSheetURL } from "./sheets";
-import { UserContext } from "./Contexts/UserContext";
+import { UserContext } from "./contexts/UserContext";
 //import { UserContextType, IUser } from "./user";
 
 

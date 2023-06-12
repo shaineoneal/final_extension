@@ -1,5 +1,5 @@
 import { createContext } from "react"; 
-import { UserStateType } from "../user";
+import { UserStateType } from "../types/user";
 
 export const UserContext = createContext<UserStateType>({
     user: {
@@ -9,3 +9,4 @@ export const UserContext = createContext<UserStateType>({
     },
     setUser: () => {}
 });
+

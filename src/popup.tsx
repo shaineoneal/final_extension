@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { IconContext } from "react-icons";  
 import { BsFillGearFill } from "react-icons/bs";
-import Login from './components/Login';
-import "./popup.css";
+import Login, { awaitLoginStatus, Testing } from './components/Login';
+import { UserType } from "./types/user";
+import "./styles/popup.css";
 
 const Popup = () => {
-
+    
     useEffect(() => {
         console.log("popup");
+        console.log("login status: ", awaitLoginStatus());
     }, []);
 
     return (
@@ -28,10 +30,8 @@ const Popup = () => {
                 </div>
             </header>
             <main>
-
-                    {<Login />}
-
-                <div></div>
+                {<Login />}
+                {<Testing />}
             </main>
         </>
     );

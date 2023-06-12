@@ -1,7 +1,11 @@
 import { useContext } from 'react';
-import { UserContext } from './Contexts/UserContext';
-import { UserType } from './user';
+import { UserContext } from './contexts/UserContext';
+import { UserType } from './types/user';
 
+/** allows access to the current user and login function
+ * 
+ * @returns {UserType} the current user
+ */
 export function useUser() {
     const { user, setUser } = useContext(UserContext);
 
@@ -10,7 +14,22 @@ export function useUser() {
         setUser(user);
     }
 
-    return { user, login };
+    const logout = () => {
+        console.log("logout");
+        setUser(null);
+    }
+
+    const changeUser = (key: string, value: string) => {
+        console.log("change user");
+        //make a copy of the user
+        const newUser = user;
+        if ((key === "email" || key === "authToken" || key === "sheetURL") && newUser) {
+            newUser[key] = value;
+            setUser(newUser);
+            console.log ("updated user: ", newUser);
+        }
+    }
+    return { user, login, logout, changeUser };
 }
 
 

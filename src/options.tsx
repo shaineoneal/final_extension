@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { IconContext } from "react-icons";
 import { BiArrowBack } from "react-icons/bi";
 import Logout from "./components/Logout";
-import "./popup.css"
+import "./styles/popup.css"
 
 export function openOptionsPage() {
   chrome.runtime.openOptionsPage();

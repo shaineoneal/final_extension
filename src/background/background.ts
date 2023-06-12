@@ -9,6 +9,19 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.storage.sync.set({ isLoggedIn: false });
 });
 
+
+
+chrome.identity.onSignInChanged.addListener(function (account, signedIn) {
+    console.log("account", account);
+    console.log("signedIn", signedIn);
+    if (signedIn) {
+        chrome.storage.sync.set({ isLoggedIn: true });
+    } else {
+        chrome.storage.sync.set({ isLoggedIn: false });
+    }
+});
+
+
 chrome.runtime.onMessage.addListener(async function (buttonClicked, sender, sendResponse) {
     console.log(buttonClicked.reason);
     if (buttonClicked.reason === "login") {

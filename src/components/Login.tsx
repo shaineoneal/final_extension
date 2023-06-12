@@ -1,30 +1,95 @@
-import { UserContext } from "../Contexts/UserContext";
-import { UserType } from "../user";
+import { UserContext } from "../contexts/UserContext";
+import { UserType } from "../types/user";
 import { useUser } from "../useUser";
+import { getAuthTokenFromGapi, getEmailFromGapi, getFromSync } from "./createUser";
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 
-/** Login component */
+const getLoginStatus = async() => {
+    chrome.identity.getAuthToken({ interactive: false }, (token) => {
+        if (token) {
+            console.log("logged in");
+            return true;
+        } else {
+            console.log("logged out");
+            return false;
+        }
+    });
+}
+
+export const awaitLoginStatus = async() => {
+    const loggedIn = await getLoginStatus();
+    return loggedIn;
+}
+
+/**
+ * 
+ * @returns Login button for popup page
+ */
 
 const LoginButton = () => {
     const { user, login } = useUser();
     
-    const handleLogin = () => {
-        console.log("save user; email: ", user?.email);
+    useEffect(() => {
+        console.log("useEffect");
+        console.log("user email test: ", user?.email);
+    }, [user]);
+
+    const handleLogin = async () => {
+        console.log("authToken: ", await getAuthTokenFromGapi());
+        console.log("save user; email: ", await getEmailFromGapi());
         login({
-            email: "test@gmail.com",
+            email: await getEmailFromGapi(),
             authToken: "test",
             sheetURL: "google.com/test",
         });
+        console.log("save user; email: ", user?.email);
     }
 
     return (
         <>
-            <button onClick={handleLogin} disabled={!useUser()}>Login</button>
-            <h1>{useUser().user?.email}</h1>
+            <button onClick={handleLogin} disabled={!!useUser().user}>
+                
+            </button>
         </>
     );
 }
 
+export const Testing = () => {
+
+    const [email, setEmail] = useState<string | null>(null);
+    const [authToken, setAuthToken] = useState<string | null>(null);
+
+    
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const email = await getFromSync("email");
+            const authToken = await getFromSync("authToken");
+            console.log("email: ", email);
+            console.log("authToken: ", authToken);
+            setEmail(email);
+            setAuthToken(authToken);
+        }
+        fetchData();
+    }, [email, authToken]);
+
+
+    return (
+        <>
+            <h1>Email</h1>
+            <p>{email}</p>
+            <h1>AuthToken</h1>
+            <p>{authToken}</p>
+        </>
+    )
+}
+
+
+/**
+ * 
+ * @returns Login element for popup page
+ */
 const Login = () => {
     const [user, setUser] = useState<UserType | null>(null);
 
@@ -32,11 +97,15 @@ const Login = () => {
         <UserContext.Provider value={{ user, setUser }}>
             <LoginButton />
         </UserContext.Provider>
-
     )
 }
 
 export default Login;
+
+
+
+
+
 
 
 
