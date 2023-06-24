@@ -1,23 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import { getCurrentTabUId, getCurrentTabUrl } from "./chrome-services/utils";
+import { ChromeMessage, Sender } from "./types";
 
 function App() {
+  const [url, setUrl] = useState<string>("");
+  const [responseFromContent, setResponseFromContent] = useState<string>("");
+
+  /**
+   * Get current URL
+   */
+  useEffect(() => {
+    getCurrentTabUrl().then((url) => {
+      setUrl(url || "undefined");
+    });
+  }, []);
+
+  const sendTestMessage = () => {
+    const message: ChromeMessage = {
+      from: Sender.React,
+      message: "Hello from React",
+    };
+
+    getCurrentTabUId((id) => {
+      id &&
+        chrome.tabs.sendMessage(id, message, (responseFromContentScript) => {
+          console.log("responseFromContentScript: ", responseFromContentScript);
+          setResponseFromContent(responseFromContentScript);
+        });
+    });
+  };
+
+  const sendRemoveMessage = () => {
+    const message: ChromeMessage = {
+      from: Sender.React,
+      message: "delete logo",
+    };
+
+    getCurrentTabUId((id) => {
+      id &&
+        chrome.tabs.sendMessage(id, message, (response) => {
+          setResponseFromContent(response);
+        });
+    });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p>Home</p>
+        <p>URL:</p>
+        <p>{url}</p>
+        <button onClick={sendTestMessage}>SEND MESSAGE</button>
+        <button onClick={sendRemoveMessage}>Remove logo</button>
+        <p>Response from content:</p>
+        <p>{responseFromContent}</p>
       </header>
     </div>
   );
